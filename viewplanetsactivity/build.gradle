@@ -1,5 +1,8 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
 
+// This is the library version used when deploying the artifact
+version = "1.0.0"
 
 android {
     compileSdkVersion 21
@@ -22,4 +25,17 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.1'
+}
+
+//to publish to local filesystem (useful for testing)
+//e.g.
+//gradle uploadArchives
+uploadArchives {
+    repositories.mavenDeployer {
+        pom.groupId = 'com.android_space'
+        pom.artifactId = 'view-planets-activity'
+        pom.version = version
+        // Add other pom properties here if you want (developer details / licenses)
+        repository(url: "file:///Users/kristina/AndroidStudioProjects/AndroidModulesExample/repos")
+    }
 }
