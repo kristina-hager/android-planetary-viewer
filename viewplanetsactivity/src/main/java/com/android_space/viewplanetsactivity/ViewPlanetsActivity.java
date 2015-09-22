@@ -34,13 +34,19 @@ public class ViewPlanetsActivity extends ActionBarActivity {
         stringBuilder.append("Information from calling application:\n");
         Intent intent = getIntent();
         String systemName = intent.getStringExtra(this.SYSTEM_NAME);
-        stringBuilder.append("planetary system name: " + systemName + "\n");
+        if (systemName != null) {
+            stringBuilder.append("planetary system name: " + systemName + "\n");
+        }
 
         Bundle planetsBundle = this.getIntent().getExtras();
-        String[] planetNames = planetsBundle.getStringArray(this.PLANETS_ARRAY);
-        stringBuilder.append("with planets: \n");
-        for (String planetName: planetNames) {
-            stringBuilder.append(planetName + "\n");
+        if (planetsBundle != null) {
+            String[] planetNames = planetsBundle.getStringArray(this.PLANETS_ARRAY);
+            if (planetNames != null) {
+                stringBuilder.append("with planets: \n");
+                for (String planetName : planetNames) {
+                    stringBuilder.append(planetName + "\n");
+                }
+            }
         }
 
         //TODO - hook up to planetarysystems lib
