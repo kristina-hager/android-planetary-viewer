@@ -45,6 +45,12 @@ task androidSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
+task zipRelease(type: Zip) {
+    from localReleaseDest
+    destinationDir buildDir
+    archiveName "release-${PUBLISH_ARTIFACT_ID}-${PUBLISH_VERSION}.zip"
+}
+
 artifacts {
     archives androidSourcesJar
     archives androidJavadocsJar
