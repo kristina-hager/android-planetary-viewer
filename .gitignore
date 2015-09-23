@@ -6,6 +6,7 @@ local.properties
 .idea/libraries
 .idea/gradle.xml
 .idea/modules.xml
+*.iml
 .DS_Store
 /build
 /captures
