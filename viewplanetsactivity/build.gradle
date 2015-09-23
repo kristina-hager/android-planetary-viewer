@@ -22,6 +22,28 @@ android {
     }
 }
 
+//javadocs and sources jar code from:
+//http://blog.blundell-apps.com/locally-release-an-android-library-for-jcenter-or-maven-central-inclusion/
+task androidJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+artifacts {
+    archives androidSourcesJar
+    archives androidJavadocsJar
+}
+
 dependencies {
     //the below is the usual for including dependencies,
     // but it is not sufficient as it won't actually build the jars into the aar
@@ -37,7 +59,7 @@ dependencies {
 uploadArchives {
     repositories.mavenDeployer {
         pom.groupId = 'com.android_space'
-        pom.artifactId = 'view-planets-activity'
+        pom.artifactId = 'viewplanetsactivity'
         pom.version = version
         // Add other pom properties here if you want (developer details / licenses)
         repository(url: "file:///Users/kristina/AndroidStudioProjects/AndroidModulesExample/repos")
