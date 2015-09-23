@@ -1,5 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
 
 // ext is a gradle closure allowing the declaration of global properties
 ext {
@@ -75,5 +77,46 @@ uploadArchives {
         pom.version = PUBLISH_VERSION
         // Add other pom properties here if you want (developer details / licenses)
         repository(url: "file://${localReleaseDest}")
+    }
+}
+
+//https://github.com/bintray/bintray-examples/blob/master/gradle-aar-example/build.gradle#L115
+def siteUrl = 'https://github.com/kristina-hager/android-planetary-viewer'
+def gitUrl = 'https://github.com/kristina-hager/android-planetary-viewer.git'
+
+bintray {
+    user =  System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+
+    publications = ['MyPublication']
+    pkg {
+        repo = 'kh-examples'
+        name = PUBLISH_ARTIFACT_ID
+        desc = 'viewplanetsactivity aar publishing example'
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ['Apache-2.0']
+        labels = ['aar', 'android', 'example']
+        publicDownloadNumbers = true
+        version {
+            name = PUBLISH_VERSION
+        }
+    }
+}
+
+//adding maven information
+publishing {
+    publications {
+        //name 'MyPublication' corresponds to 'publications' setting in bintray section
+        MyPublication(MavenPublication) {
+            artifact "${project.buildDir}/outputs/aar/${project.name}-release.aar"
+            groupId 'com.android_space'
+            artifactId 'viewplanetsactivity'
+            version '1.0.0'
+
+            //add sources and javadoc jars to upload
+            artifact(androidSourcesJar)
+            artifact(androidJavadocsJar)
+        }
     }
 }
