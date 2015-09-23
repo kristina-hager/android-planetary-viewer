@@ -1,8 +1,14 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 
-// This is the library version used when deploying the artifact
-version = "1.0.0"
+// ext is a gradle closure allowing the declaration of global properties
+ext {
+    PUBLISH_GROUP_ID = 'com.android_space'
+    PUBLISH_ARTIFACT_ID = 'viewplanetsactivity'
+    PUBLISH_VERSION = '1.0.0'
+}
+
+def localReleaseDest = "/Users/kristina/AndroidStudioProjects/AndroidModulesExample/repos"
 
 android {
     compileSdkVersion 21
@@ -58,10 +64,10 @@ dependencies {
 //gradle uploadArchives
 uploadArchives {
     repositories.mavenDeployer {
-        pom.groupId = 'com.android_space'
-        pom.artifactId = 'viewplanetsactivity'
-        pom.version = version
+        pom.groupId = PUBLISH_GROUP_ID
+        pom.artifactId = PUBLISH_ARTIFACT_ID
+        pom.version = PUBLISH_VERSION
         // Add other pom properties here if you want (developer details / licenses)
-        repository(url: "file:///Users/kristina/AndroidStudioProjects/AndroidModulesExample/repos")
+        repository(url: "file://${localReleaseDest}")
     }
 }
