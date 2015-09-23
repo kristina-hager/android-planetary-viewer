@@ -23,6 +23,10 @@ android {
 }
 
 dependencies {
+    //the below is the usual for including dependencies,
+    // but it is not sufficient as it won't actually build the jars into the aar
+//    compile group: 'example.com', name: 'planetary-system', version: '1.0.0'
+    //therefore, I've copied the jars needed for this module into viewplanetsactivity/libs
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.1'
 }

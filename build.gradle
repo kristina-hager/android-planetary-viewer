@@ -14,6 +14,10 @@ buildscript {
 
 allprojects {
     repositories {
+        //the below isn't needed since the jar files need to be in libs
+//        maven {
+//            url  "http://dl.bintray.com/kristina-hager/kh-examples"
+//        }
         jcenter()
     }
 }
