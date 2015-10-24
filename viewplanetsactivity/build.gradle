@@ -7,10 +7,12 @@ apply plugin: 'maven-publish'
 ext {
     PUBLISH_GROUP_ID = 'com.android_space'
     PUBLISH_ARTIFACT_ID = 'viewplanetsactivity'
-    PUBLISH_VERSION = '1.0.0'
+    PUBLISH_VERSION = '1.0.1'
 }
 
-def localReleaseDest = "/Users/kristina/AndroidStudioProjects/AndroidModulesExample/repos"
+def localReleaseDest = "/Users/kristina/localAndroidRepos"
+def siteUrl = 'https://github.com/kristina-hager/android-planetary-viewer'
+def gitUrl = 'https://github.com/kristina-hager/android-planetary-viewer.git'
 
 android {
     compileSdkVersion 21
@@ -30,6 +32,15 @@ android {
     }
 }
 
+dependencies {
+    //the below is the usual for including dependencies,
+    // but it is not sufficient as it won't actually build the jars into the aar
+//    compile group: 'example.com', name: 'planetary-system', version: '1.0.0'
+    //therefore, I've copied the jars needed for this module into viewplanetsactivity/libs
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:22.2.1'
+}
+
 //javadocs and sources jar code from:
 //http://blog.blundell-apps.com/locally-release-an-android-library-for-jcenter-or-maven-central-inclusion/
 task androidJavadocs(type: Javadoc) {
@@ -47,29 +58,12 @@ task androidSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
-task zipRelease(type: Zip) {
-    from localReleaseDest
-    destinationDir buildDir
-    archiveName "release-${PUBLISH_ARTIFACT_ID}-${PUBLISH_VERSION}.zip"
-}
-
 artifacts {
     archives androidSourcesJar
     archives androidJavadocsJar
 }
 
-dependencies {
-    //the below is the usual for including dependencies,
-    // but it is not sufficient as it won't actually build the jars into the aar
-//    compile group: 'example.com', name: 'planetary-system', version: '1.0.0'
-    //therefore, I've copied the jars needed for this module into viewplanetsactivity/libs
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.2.1'
-}
-
-//to publish to local filesystem (useful for testing)
-//e.g.
-//gradle uploadArchives
+//publish to Maven repo on local filesystem
 uploadArchives {
     repositories.mavenDeployer {
         pom.groupId = PUBLISH_GROUP_ID
@@ -79,11 +73,11 @@ uploadArchives {
         repository(url: "file://${localReleaseDest}")
     }
 }
+//require :build tasks such as :test,:assemble before upload archives
+tasks.uploadArchives.dependsOn(build)
 
+//helpful hints:
 //https://github.com/bintray/bintray-examples/blob/master/gradle-aar-example/build.gradle#L115
-def siteUrl = 'https://github.com/kristina-hager/android-planetary-viewer'
-def gitUrl = 'https://github.com/kristina-hager/android-planetary-viewer.git'
-
 bintray {
     user =  System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
@@ -104,15 +98,16 @@ bintray {
     }
 }
 
+//helpful hints: https://github.com/lecho/hellocharts-android/blob/master/hellocharts-library/build.gradle
 //adding maven information
 publishing {
     publications {
         //name 'MyPublication' corresponds to 'publications' setting in bintray section
         MyPublication(MavenPublication) {
             artifact "${project.buildDir}/outputs/aar/${project.name}-release.aar"
-            groupId 'com.android_space'
-            artifactId 'viewplanetsactivity'
-            version '1.0.0'
+            groupId PUBLISH_GROUP_ID
+            artifactId PUBLISH_ARTIFACT_ID
+            version PUBLISH_VERSION
 
             //add sources and javadoc jars to upload
             artifact(androidSourcesJar)
@@ -120,3 +115,5 @@ publishing {
         }
     }
 }
+//again, add a dependency on :build to :bintrayUpload
+tasks.bintrayUpload.dependsOn(build)
