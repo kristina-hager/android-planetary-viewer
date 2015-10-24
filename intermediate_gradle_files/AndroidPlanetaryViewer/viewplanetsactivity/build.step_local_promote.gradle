@@ -1,0 +1,66 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "22.0.1"
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 21
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:22.2.1'
+}
+
+task androidJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+artifacts {
+    archives androidSourcesJar
+    archives androidJavadocsJar
+}
+
+apply plugin: 'maven'
+
+// ext is a gradle closure allowing the declaration of global properties
+ext {
+    PUBLISH_GROUP_ID = 'com.android_space'
+    PUBLISH_ARTIFACT_ID = 'viewplanetsactivity'
+    PUBLISH_VERSION = '1.0.0'
+}
+
+def localReleaseDest = "/Users/kristina/localAndroidRepos"
+
+//publish to Maven repo on local filesystem
+uploadArchives {
+    repositories.mavenDeployer {
+        pom.groupId = PUBLISH_GROUP_ID
+        pom.artifactId = PUBLISH_ARTIFACT_ID
+        pom.version = PUBLISH_VERSION
+        // Add other pom properties here if you want (developer details / licenses)
+        repository(url: "file://${localReleaseDest}")
+    }
+}
