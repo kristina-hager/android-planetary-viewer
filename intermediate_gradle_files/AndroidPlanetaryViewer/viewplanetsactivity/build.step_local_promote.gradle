@@ -64,3 +64,6 @@ uploadArchives {
         repository(url: "file://${localReleaseDest}")
     }
 }
+
+//require :build tasks such as :test,:assemble before upload archives
+tasks.uploadArchives.dependsOn(build)
