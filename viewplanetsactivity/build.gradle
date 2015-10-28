@@ -7,7 +7,7 @@ apply plugin: 'maven-publish'
 ext {
     PUBLISH_GROUP_ID = 'com.android_space'
     PUBLISH_ARTIFACT_ID = 'viewplanetsactivity'
-    PUBLISH_VERSION = '1.0.1'
+    PUBLISH_VERSION = '1.0.0'
 }
 
 def localReleaseDest = "/Users/kristina/localAndroidRepos"
@@ -34,8 +34,10 @@ android {
 
 dependencies {
     //the below is the usual for including dependencies,
+    //    compile group: 'example.com', name: 'planetary-system', version: '1.0.0'
     // but it is not sufficient as it won't actually build the jars into the aar
-//    compile group: 'example.com', name: 'planetary-system', version: '1.0.0'
+    //due to a bug in Gradle or the Android gradle plugin:
+    //https://discuss.gradle.org/t/including-a-java-project-into-an-android-library-project-does-not-include-transitive-file-dependencies/2442
     //therefore, I've copied the jars needed for this module into viewplanetsactivity/libs
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.1'
